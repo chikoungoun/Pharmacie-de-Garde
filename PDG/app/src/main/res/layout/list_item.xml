@@ -21,7 +21,9 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             tools:text="nom"
-            style="@style/TextAppearance.AppCompat.Large"/>
+            style="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#2ca230"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/quartier"

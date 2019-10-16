@@ -2,6 +2,7 @@ package com.example.pdg;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
                             adapter = new PharmacieAdapter(MainActivity.this,pharmacies);
                             rvPharmacies.setAdapter(adapter);
+
+                            RecyclerView.ItemDecoration divider = new DividerItemDecoration(MainActivity.this,DividerItemDecoration.VERTICAL);
+                            rvPharmacies.addItemDecoration(divider);
 
 
                         } catch (JSONException e) {
