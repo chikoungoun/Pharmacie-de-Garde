@@ -7,11 +7,15 @@ public class Pharmacie {
     private String adresse;
     private String telephone;
 
-    public Pharmacie(String nom, String quartier, String adresse, String telephone) {
+
+    private String coordonnee;
+
+    public Pharmacie(String nom, String quartier, String adresse, String telephone, String coordonnee) {
         this.nom = nom;
         this.quartier = quartier;
         this.adresse = adresse;
         this.telephone = telephone;
+        this.coordonnee = coordonnee;
     }
 
     public String getNom() {
@@ -28,5 +32,9 @@ public class Pharmacie {
 
     public String getTelephone() {
         return telephone;
+    }
+
+    public String getCoordonnee() {
+        return coordonnee;
     }
 }

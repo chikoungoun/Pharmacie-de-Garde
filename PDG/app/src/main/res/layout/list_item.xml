@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="8dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:clickable="true">
 
 
 
@@ -13,7 +15,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="8dp">
+        android:layout_margin="8dp"
+        android:paddingLeft="8dp"
+        android:lineSpacingExtra="10dp">
 
         <TextView
             android:id="@+id/nom"
@@ -21,7 +25,7 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             tools:text="nom"
-            style="@style/TextAppearance.AppCompat.Large"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#2ca230"
             android:textStyle="bold"/>
 
@@ -31,6 +35,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             tools:text="quartier"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="bold"
+            android:paddingTop="4dp"
             />
 
         <TextView
@@ -39,6 +46,8 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             tools:text="adresse"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:paddingTop="4dp"
             />
 
         <TextView
@@ -47,6 +56,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             tools:text="telephone"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:paddingTop="4dp"
             />
 
 

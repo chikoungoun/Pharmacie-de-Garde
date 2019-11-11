@@ -1,11 +1,14 @@
 package com.example.pdg;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,10 +22,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PharmacieAdapter.OnItemClickListener {
 
 
-    public static final String SPEC_JSON = "https://raw.githubusercontent.com/chikoungoun/Scraping/master/Pharmacies%20de%20garde/json_file/pharmacie_de_garde";
+    public static final String SPEC_JSON = "https://raw.githubusercontent.com/chikoungoun/Scraping/master/Pharmacies%20de%20garde/json_file/neo_pdg.json";
 
     private PharmacieAdapter adapter;
     private ArrayList<Pharmacie> pharmacies;
@@ -60,14 +63,16 @@ public class MainActivity extends AppCompatActivity {
 
                                 JSONObject jObject = jsonArray.getJSONObject(i);
 
-                                String nom = jObject.getString("nom");
+                                String nom = jObject.getString("pharmacie");
                                 Log.e("SONIC",""+nom);
                                 String quartier = jObject.getString("quartier");
                                 String adresse = jObject.getString("adresse");
                                 String telephone = jObject.getString("telephone");
+                                String coordonnee = jObject.getString("coordonnee");
 
 
-                                Pharmacie pharmacie = new Pharmacie(nom, quartier, adresse.toLowerCase(), telephone);
+
+                                Pharmacie pharmacie = new Pharmacie(nom, quartier, adresse.toLowerCase(), telephone,coordonnee);
 
                                 pharmacies.add(pharmacie);
                             }
@@ -77,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
                             RecyclerView.ItemDecoration divider = new DividerItemDecoration(MainActivity.this,DividerItemDecoration.VERTICAL);
                             rvPharmacies.addItemDecoration(divider);
+
+                            // Ajout du ClickListener
+                            adapter.setOnItemClickListener(MainActivity.this);
 
 
                         } catch (JSONException e) {
@@ -92,4 +100,25 @@ public class MainActivity extends AppCompatActivity {
 
         mRequestQueue.add(request);
     }
+
+    @Override
+    public void onItemClick(int position) {
+
+        Pharmacie clickedItem = pharmacies.get(position);
+
+        Toast.makeText(this,""+clickedItem.getCoordonnee(),Toast.LENGTH_SHORT).show();
+
+        Uri gmmIntentUri = Uri.parse("geo:"+clickedItem.getCoordonnee()+"?z=13&q="+clickedItem.getNom()+",+casablanca");
+
+        // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        // Make the Intent explicit by setting the Google Maps package
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        startActivity(mapIntent);
+
+    }
+
+
+
 }
