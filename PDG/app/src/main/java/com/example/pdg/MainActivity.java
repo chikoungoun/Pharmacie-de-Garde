@@ -42,7 +42,14 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
         rvPharmacies.setHasFixedSize(true);
 
-        rvPharmacies.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+
+        rvPharmacies.setLayoutManager(llm);
+
+
+       // rvPharmacies.addItemDecoration(new RV_Divider(getApplicationContext()));
+        //rvPharmacies.addItemDecoration(new DividerItemDecoration(getApplicationContext(),0));
+
 
         pharmacies = new ArrayList<>();
 
@@ -80,8 +87,9 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
                             adapter = new PharmacieAdapter(MainActivity.this,pharmacies);
                             rvPharmacies.setAdapter(adapter);
 
-                            RecyclerView.ItemDecoration divider = new DividerItemDecoration(MainActivity.this,DividerItemDecoration.VERTICAL);
-                            rvPharmacies.addItemDecoration(divider);
+                            // Setting up a divider
+                            //RecyclerView.ItemDecoration divider = new DividerItemDecoration(MainActivity.this,DividerItemDecoration.VERTICAL);
+                            //rvPharmacies.addItemDecoration(divider);
 
                             // Ajout du ClickListener
                             adapter.setOnItemClickListener(MainActivity.this);
