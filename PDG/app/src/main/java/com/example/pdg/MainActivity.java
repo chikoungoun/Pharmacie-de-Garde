@@ -1,13 +1,18 @@
 package com.example.pdg;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -15,6 +20,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +35,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements PharmacieAdapter.OnItemClickListener {
 
 
-    public static final String SPEC_JSON = "https://raw.githubusercontent.com/chikoungoun/Scraping/master/Pharmacies%20de%20garde/json_file/neo_pdg.json";
+    public static final String SPEC_JSON = "https://raw.githubusercontent.com/GharWissen/PDG/master/casa_pdg.json";
+
+    private TextView emptyStateTextView;
 
     private PharmacieAdapter adapter;
     private ArrayList<Pharmacie> pharmacies;
@@ -37,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        emptyStateTextView = findViewById(R.id.empty_view);
 
         rvPharmacies = findViewById(R.id.rvPharmacies);
 
@@ -55,7 +69,47 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
         mRequestQueue = Volley.newRequestQueue(this);
 
-        parseJSON();
+
+
+        Log.e("RequestQueue",""+mRequestQueue);
+
+
+        // *** Connectivity Checker ***
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected()){
+
+            parseJSON();// -------------------------------------------------
+
+        }else {
+
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+
+            emptyStateTextView.setText(R.string.no_internet_connection);
+        }
+
+
+
+
+
+
+        // *** Ads part ***
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        AdView adView = (AdView)findViewById(R.id.adv1);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
+
     }
 
     private void parseJSON(){
@@ -109,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         mRequestQueue.add(request);
     }
 
+    // Click + Geolocation
     @Override
     public void onItemClick(int position) {
 
@@ -117,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         Toast.makeText(this,""+clickedItem.getCoordonnee(),Toast.LENGTH_SHORT).show();
 
         Uri gmmIntentUri = Uri.parse("geo:"+clickedItem.getCoordonnee()+"?z=13&q="+clickedItem.getNom()+",+casablanca");
+
+        // Testing the result
+        Log.e("URI",""+gmmIntentUri);
 
         // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
