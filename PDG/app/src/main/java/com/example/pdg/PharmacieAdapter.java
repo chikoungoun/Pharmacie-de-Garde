@@ -115,4 +115,6 @@ public class PharmacieAdapter  extends RecyclerView.Adapter<PharmacieAdapter.Vie
     public int getItemCount() {
         return mPharmacies.size();
     }
+
+
 }

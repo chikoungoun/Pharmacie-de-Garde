@@ -8,10 +8,14 @@ import android.net.Uri;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.loader.app.LoaderManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +41,13 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
     public static final String SPEC_JSON = "https://raw.githubusercontent.com/GharWissen/PDG/master/casa_pdg.json";
 
+    // message for missing internet connection
     private TextView emptyStateTextView;
+    //Swipe to refresh
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private PharmacieAdapter adapter;
-    private ArrayList<Pharmacie> pharmacies;
+    private ArrayList<Pharmacie> pharmaciesList;
     private RecyclerView rvPharmacies;
 
     private RequestQueue mRequestQueue;
@@ -50,26 +57,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        emptyStateTextView = findViewById(R.id.empty_view);
-
-        rvPharmacies = findViewById(R.id.rvPharmacies);
-
-        rvPharmacies.setHasFixedSize(true);
-
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-
-        rvPharmacies.setLayoutManager(llm);
-
-
-       // rvPharmacies.addItemDecoration(new RV_Divider(getApplicationContext()));
-        //rvPharmacies.addItemDecoration(new DividerItemDecoration(getApplicationContext(),0));
-
-
-        pharmacies = new ArrayList<>();
-
-        mRequestQueue = Volley.newRequestQueue(this);
-
-
+        contentSetter();
 
         Log.e("RequestQueue",""+mRequestQueue);
 
@@ -77,22 +65,54 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         // *** Connectivity Checker ***
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-        if(networkInfo != null && networkInfo.isConnected()){
+        if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
 
+            emptyStateTextView.setText("");
+            Toast.makeText(MainActivity.this,"Connection Available",Toast.LENGTH_SHORT).show();
             parseJSON();// -------------------------------------------------
 
         }else {
 
-            View loadingIndicator = findViewById(R.id.loading_indicator);
+            ProgressBar loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
 
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
 
 
+        //Swipe to Refresh
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
 
+               // Toast.makeText(MainActivity.this, "Inside the SwipeRefresher",Toast.LENGTH_SHORT).show();
+
+
+                if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
+
+                   // Toast.makeText(MainActivity.this,"CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
+                    Log.e("Swiper","Connection available");
+
+                    emptyStateTextView.setText("");
+                    pharmaciesList.clear();
+                    parseJSON();// -------------------------------------------------
+                  
+                }else{
+
+                    Toast.makeText(MainActivity.this,"NOT CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
+                }
+                pharmaciesList = new ArrayList<>();
+                mRequestQueue = Volley.newRequestQueue(MainActivity.this);
+                parseJSON();
+                emptyStateTextView.setText("");
+
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
 
 
@@ -111,6 +131,31 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         adView.loadAd(adRequest);
 
     }
+
+
+
+    /*     */
+
+    private void contentSetter(){
+
+        emptyStateTextView = findViewById(R.id.empty_view);
+
+        rvPharmacies = findViewById(R.id.rvPharmacies);
+
+        rvPharmacies.setHasFixedSize(true);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+
+        rvPharmacies.setLayoutManager(llm);
+
+        pharmaciesList = new ArrayList<>();
+
+        mRequestQueue = Volley.newRequestQueue(this);
+
+
+    }
+
+    /*     */
 
     private void parseJSON(){
 
@@ -135,10 +180,10 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
                                 Pharmacie pharmacie = new Pharmacie(nom, quartier, adresse.toLowerCase(), telephone,coordonnee);
 
-                                pharmacies.add(pharmacie);
+                                pharmaciesList.add(pharmacie);
                             }
 
-                            adapter = new PharmacieAdapter(MainActivity.this,pharmacies);
+                            adapter = new PharmacieAdapter(MainActivity.this,pharmaciesList);
                             rvPharmacies.setAdapter(adapter);
 
                             // Setting up a divider
@@ -167,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
     @Override
     public void onItemClick(int position) {
 
-        Pharmacie clickedItem = pharmacies.get(position);
+        Pharmacie clickedItem = pharmaciesList.get(position);
 
         Toast.makeText(this,""+clickedItem.getCoordonnee(),Toast.LENGTH_SHORT).show();
 
@@ -184,6 +229,9 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         startActivity(mapIntent);
 
     }
+
+
+
 
 
 
