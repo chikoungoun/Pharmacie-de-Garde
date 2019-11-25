@@ -70,13 +70,10 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
 
             emptyStateTextView.setText("");
-            Toast.makeText(MainActivity.this,"Connection Available",Toast.LENGTH_SHORT).show();
+
             parseJSON();// -------------------------------------------------
 
         }else {
-
-            ProgressBar loadingIndicator = findViewById(R.id.loading_indicator);
-            loadingIndicator.setVisibility(View.GONE);
 
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
@@ -93,16 +90,16 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
                 if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
 
-                   // Toast.makeText(MainActivity.this,"CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
+
                     Log.e("Swiper","Connection available");
 
                     emptyStateTextView.setText("");
                     pharmaciesList.clear();
                     parseJSON();// -------------------------------------------------
-                  
+
                 }else{
 
-                    Toast.makeText(MainActivity.this,"NOT CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this,"NOT CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
                 }
                 pharmaciesList = new ArrayList<>();
                 mRequestQueue = Volley.newRequestQueue(MainActivity.this);
@@ -117,18 +114,8 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
 
         // *** Ads part ***
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
+        implementAds();
 
-        AdView adView = (AdView)findViewById(R.id.adv1);
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        adView.loadAd(adRequest);
 
     }
 
@@ -216,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
         Toast.makeText(this,""+clickedItem.getCoordonnee(),Toast.LENGTH_SHORT).show();
 
-        Uri gmmIntentUri = Uri.parse("geo:"+clickedItem.getCoordonnee()+"?z=13&q="+clickedItem.getNom()+",+casablanca");
+        Uri gmmIntentUri = Uri.parse("geo:"+clickedItem.getCoordonnee()+"?z=13&q="+clickedItem.getNom()+","+clickedItem.getAdresse()+"+casablanca");
 
         // Testing the result
         Log.e("URI",""+gmmIntentUri);
@@ -227,6 +214,23 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         mapIntent.setPackage("com.google.android.apps.maps");
 
         startActivity(mapIntent);
+
+    }
+
+
+    public void implementAds(){
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        AdView adView = (AdView)findViewById(R.id.adv1);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
 
     }
 
