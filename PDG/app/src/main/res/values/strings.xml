@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PDG Loader</string>
+    <string name="app_name">Pharma_Casa</string>
     <string name="title_activity_splash">Splash</string>
 
     <string name="no_internet_connection">No internet connection. Swipe to refresh</string>
