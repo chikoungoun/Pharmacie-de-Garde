@@ -65,20 +65,18 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contentSetter();
+       contentSetter();
 
         Log.e("RequestQueue",""+mRequestQueue);
 
 
         // *** Connectivity Checker ***
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
         if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
 
             emptyStateTextView.setText("");
-
+            Log.e("JSON 1"," ----------- ");
             parseJSON();// -------------------------------------------------
 
         }else {
@@ -99,19 +97,29 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
                 if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
 
 
-                    Log.e("Swiper","Connection available");
+                    Log.e("Swipe to Refresh","Connection available");
 
                     emptyStateTextView.setText("");
                     pharmaciesList.clear();
-                    parseJSON();// -------------------------------------------------
+
+                    Log.e("JSON 2"," ********************* ");
+                    //parseJSON();// -------------------------------------------------
 
                 }else{
 
                     //Toast.makeText(MainActivity.this,"NOT CONNECTED SWIPE",Toast.LENGTH_SHORT).show();
                 }
+
                 pharmaciesList = new ArrayList<>();
-                mRequestQueue = Volley.newRequestQueue(MainActivity.this);
+
+
+
+                //mRequestQueue = Volley.newRequestQueue(MainActivity.this);
+                //adapter = new PharmacieAdapter(MainActivity.this,pharmaciesList);
+                //rvPharmacies.setAdapter(adapter);
+                Log.e("JSON 3"," #################### ");
                 parseJSON();
+
                 emptyStateTextView.setText("");
 
 
@@ -157,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
 
     private void parseJSON(){
 
+        Log.e("ParseJSON","Method ParseJSON");
         JsonArrayRequest request = new JsonArrayRequest(SPEC_JSON,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
                                 JSONObject jObject = jsonArray.getJSONObject(i);
 
                                 String nom = jObject.getString("pharmacie");
-                                Log.e("SONIC",""+nom);
+                                //Log.e("SONIC",""+nom);
                                 String quartier = jObject.getString("quartier");
                                 String adresse = jObject.getString("adresse");
                                 String telephone = jObject.getString("telephone");
@@ -181,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
                                 pharmaciesList.add(pharmacie);
                             }
 
+                            Log.e("ParseJSON","Adapter ParseJSON");
                             adapter = new PharmacieAdapter(MainActivity.this,pharmaciesList);
                             rvPharmacies.setAdapter(adapter);
 
@@ -270,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
                 startActivity(call_button);
 
                 // repopulate the recyclerview not to dismiss the data
+                adapter.clear();
                 rvPharmacies.setAdapter(adapter);
 
             }
@@ -326,8 +337,18 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
     }
 
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        Log.e("OnRestart","Restartu");
+        Toast.makeText( this,"Restarto", Toast.LENGTH_SHORT).show();
+
+        adapter = new PharmacieAdapter(MainActivity.this,pharmaciesList);
+        rvPharmacies.setAdapter(adapter);
+        Log.e("JSON 4","!!!!!!!!!!!!!!!!");
+        parseJSON();
 
 
-
-
+    }
 }
