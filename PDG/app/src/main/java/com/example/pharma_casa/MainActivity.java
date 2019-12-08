@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
        contentSetter();
 
@@ -328,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
             // limit at which the call to intent gets triggered
             @Override
             public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-                return 0.6f;
+                return 0.7f;
             }
 
 
@@ -341,8 +343,7 @@ public class MainActivity extends AppCompatActivity implements PharmacieAdapter.
     protected void onRestart() {
         super.onRestart();
 
-        Log.e("OnRestart","Restartu");
-        Toast.makeText( this,"Restarto", Toast.LENGTH_SHORT).show();
+        //Log.e("OnRestart","Restartu");
 
         adapter = new PharmacieAdapter(MainActivity.this,pharmaciesList);
         rvPharmacies.setAdapter(adapter);

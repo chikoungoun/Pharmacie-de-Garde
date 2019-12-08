@@ -107,9 +107,6 @@ public class PharmacieAdapter  extends RecyclerView.Adapter<PharmacieAdapter.Vie
         telephone.setText(pharmacie.getTelephone());
 
 
-
-
-
     }
 
     @Override
@@ -117,5 +114,16 @@ public class PharmacieAdapter  extends RecyclerView.Adapter<PharmacieAdapter.Vie
         return mPharmacies.size();
     }
 
+    public void clear(){
+       int size =  mPharmacies.size();
+
+       if(size >0){
+           for(int i=0; i< size;i++){
+               mPharmacies.remove(0);
+           }
+
+           this.notifyItemRangeChanged(0,size);
+       }
+    }
 
 }
